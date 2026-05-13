@@ -1,36 +1,36 @@
-# 🥗 NutriCoach — Asistente Nutricional con Memoria Persistente
+# 🥗 NutriCoach — Nutritional Assistant with Persistent Memory
 
-Proyecto final del curso **Agentes de IA con Memoria Persistente** del BSG Institute.
+Final project for the **AI Agents with Persistent Memory** course at BSG Institute.
 
-NutriCoach es un coach nutricional digital que combina:
-- 👤 **Perfiles médico-nutricionales** persistidos en Firestore.
-- 🧠 **Memoria semántica de largo plazo** (no solo logs de mensajes).
-- 🔍 **Datos nutricionales en tiempo real** vía USDA FoodData Central.
-- 📰 **Noticias y recalls** vía Tavily.
-- 💸 **Modelo router** que reduce costo ~70% (gpt-5-mini ↔ gpt-5).
-- 🔐 **Guardrails** contra prompt injection y disclaimers médicos.
+NutriCoach is a digital nutritional coach that combines:
+- 👤 **Medical-nutritional profiles** persisted in Firestore.
+- 🧠 **Long-term semantic memory** (not just message logs).
+- 🔍 **Real-time nutritional data** via USDA FoodData Central.
+- 📰 **News and recalls** via Tavily.
+- 💸 **Model router** that reduces costs by ~70% (gpt-5-mini ↔ gpt-5).
+- 🔐 **Guardrails** against prompt injection and medical disclaimers.
 
-## 📁 Estructura
+## 📁 Structure
 
 ```
 nutricoach/
 ├── backend/
 │   ├── agent/
-│   │   ├── agent.py              # Composición LangChain + system prompt
-│   │   ├── model_router.py       # Heurística mini ↔ full (gpt-5-mini / gpt-5)
+│   │   ├── agent.py              # LangChain composition + system prompt
+│   │   ├── model_router.py       # Mini ↔ full heuristic (gpt-5-mini / gpt-5)
 │   │   └── tools_langchain.py    # @tool USDA + @tool Tavily
 │   ├── data/
-│   │   └── seed_clients.json     # 3 perfiles ricos
+│   │   └── seed_clients.json     # 3 rich profiles
 │   ├── firebase/
-│   │   ├── client.py             # AsyncClient Firestore
-│   │   ├── clients.py            # CRUD clientes
-│   │   ├── chat_history.py       # CRUD conversaciones
-│   │   └── long_term_memory.py   # Extracción de facts + compactación
+│   │   ├── client.py             # Firestore AsyncClient
+│   │   ├── clients.py            # Client CRUD
+│   │   ├── chat_history.py       # Conversation CRUD
+│   │   └── long_term_memory.py   # Fact extraction + compaction
 │   ├── routers/
-│   │   ├── agent_router.py       # /agent/stream con SSE robusto
+│   │   ├── agent_router.py       # /agent/stream with robust SSE
 │   │   └── clients_router.py     # /clients
 │   ├── security/
-│   │   └── guardrails.py         # Sanitización + anti-injection
+│   │   └── guardrails.py         # Sanitization + anti-injection
 │   ├── tools/
 │   │   └── nutrition_tools.py    # USDA + Tavily clients
 │   ├── config.py
@@ -45,18 +45,18 @@ nutricoach/
 └── README.md
 ```
 
-## 🚀 Setup local
+## 🚀 Local Setup
 
-### 1. Servicios externos
+### 1. External Services
 
-Antes de arrancar el backend:
+Before starting the backend:
 
-| Servicio | Para qué | Plan |
+| Service | Purpose | Plan |
 |---|---|---|
-| Firebase Firestore | Datos del cliente y conversaciones | Spark (gratis) |
-| OpenAI API | LLM | $5 USD bastan |
-| USDA FoodData Central | Datos nutricionales | Gratis (1000 req/h) — [signup](https://fdc.nal.usda.gov/api-key-signup/) |
-| Tavily | Búsqueda web | 1000 búsquedas/mes (gratis) |
+| Firebase Firestore | Client data and conversations | Spark (free) |
+| OpenAI API | LLM | $5 USD is sufficient |
+| USDA FoodData Central | Nutritional data | Free (1000 req/h) — [signup](https://fdc.nal.usda.gov/api-key-signup/) |
+| Tavily | Web search | 1000 searches/month (free) |
 
 ### 2. Backend
 
@@ -67,17 +67,17 @@ source venv/bin/activate         # Linux/Mac
 # venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 
-cp .env.example .env             # luego editar con tus llaves
-# colocar firebase-service-account.json en backend/
+cp .env.example .env             # then edit with your keys
+# place firebase-service-account.json in backend/
 
-python seed.py                   # carga los 3 perfiles
+python seed.py                   # loads the 3 profiles
 uvicorn main:app --reload --port 8000
 ```
 
-Verificación:
+Verification:
 - `http://localhost:8000/health` → `{"status": "ok"}`
-- `http://localhost:8000/docs` → Swagger
-- `http://localhost:8000/clients` → 3 perfiles cargados
+- `http://localhost:8000/docs` → Swagger UI
+- `http://localhost:8000/clients` → 3 loaded profiles
 
 ### 3. Frontend
 
@@ -88,16 +88,16 @@ npm run dev
 # http://localhost:5173
 ```
 
-## ☁️ Deploy a Cloud Run (URL pública)
+## ☁️ Deploy to Cloud Run (Public URL)
 
-### Pre-requisitos
-- `gcloud` CLI autenticado contra tu proyecto.
-- API de Cloud Run y Cloud Build habilitadas.
+### Prerequisites
+- `gcloud` CLI authenticated against your project.
+- Cloud Run and Cloud Build APIs enabled.
 
-### 1. Subir credenciales como Secret
+### 1. Upload Credentials as Secrets
 
 ```bash
-# Service account de Firebase
+# Firebase service account
 gcloud secrets create firebase-sa --data-file=backend/firebase-service-account.json
 
 # API keys
@@ -106,7 +106,7 @@ echo -n "$TAVILY_API_KEY"  | gcloud secrets create tavily-key  --data-file=-
 echo -n "$USDA_API_KEY"    | gcloud secrets create usda-key    --data-file=-
 ```
 
-### 2. Build & Deploy del backend
+### 2. Build & Deploy Backend
 
 ```bash
 PROJECT_ID=$(gcloud config get-value project)
@@ -127,75 +127,71 @@ gcloud run deploy nutricoach-backend \
   --concurrency 20 \
   --set-env-vars "FIREBASE_PROJECT_ID=$PROJECT_ID" \
   --set-env-vars "GOOGLE_APPLICATION_CREDENTIALS=/secrets/firebase-sa.json" \
-  --set-env-vars "CORS_ORIGINS=https://tu-frontend.web.app,http://localhost:5173" \
+  --set-env-vars "CORS_ORIGINS=https://your-frontend.web.app,http://localhost:5173" \
   --set-secrets "/secrets/firebase-sa.json=firebase-sa:latest" \
   --update-secrets "OPENAI_API_KEY=openai-key:latest" \
   --update-secrets "TAVILY_API_KEY=tavily-key:latest" \
   --update-secrets "USDA_API_KEY=usda-key:latest"
 ```
 
-> **Nota sobre SSE**: Cloud Run soporta SSE de forma nativa siempre que el
-> request no exceda el `--timeout` configurado (aquí 300s = 5 min). El header
-> `X-Accel-Buffering: no` que ya devuelve nuestro endpoint previene buffering
-> intermedio.
+> **Note on SSE**: Cloud Run natively supports SSE as long as the request
+> does not exceed the configured `--timeout` (here 300s = 5 min). The header
+> `X-Accel-Buffering: no` returned by our endpoint prevents intermediate buffering.
 
-### 3. Frontend a Firebase Hosting (o Cloud Run)
+### 3. Deploy Frontend to Firebase Hosting (or Cloud Run)
 
 ```bash
 cd frontend
 echo "VITE_API_BASE=https://nutricoach-backend-xxxx-uc.a.run.app" > .env.production
 npm run build
 
-# Opción A: Firebase Hosting
+# Option A: Firebase Hosting
 firebase init hosting
 firebase deploy --only hosting
 
-# Opción B: Cloud Run con Nginx
-# (ver frontend/Dockerfile si lo agregás)
+# Option B: Cloud Run with Nginx
+# (see frontend/Dockerfile if added)
 ```
 
-## 🧪 Smoke test post-deploy
+## 🧪 Post-Deploy Smoke Test
 
 ```bash
-BASE=https://tu-backend.run.app
+BASE=https://your-backend.run.app
 
 curl $BASE/health
 # {"status":"ok"}
 
 curl $BASE/clients
-# Lista de 3 clientes
+# List of 3 clients
 
-# Stream test (Ctrl+C para cortar)
-curl -N "$BASE/agent/stream?client_id=client_001&message=Hola%2C+%C2%BFqu%C3%A9+puedo+desayunar+hoy%3F"
+# Stream test (Ctrl+C to stop)
+curl -N "$BASE/agent/stream?client_id=client_001&message=Hello%2C+what+can+I+have+for+breakfast+today%3F"
 ```
 
 ## 🐛 Troubleshooting
 
-| Síntoma | Causa probable | Fix |
+| Symptom | Probable Cause | Fix |
 |---|---|---|
-| `Firestore: index not found` | Falta índice `client_id ASC, updated_at DESC` en `conversations` | Crear con el link que da el error |
-| Tokens llegan todos juntos | Proxy buffereando | Verificar header `X-Accel-Buffering: no` (ya está) |
-| `429 rate limit exceeded` | El rate limiter hizo lo suyo | Esperar 60s. Para tests intensivos, subir `_RATE_MAX_REQS` |
-| `400 rejected: empty_message` | El frontend envió string vacío | Validar input antes de hacer fetch |
-| El agente nunca usa USDA | Docstring poco clara | Revisar `tools_langchain.py`, agregar más ejemplos del dominio |
-| Costo se va de las manos | Routing forzando siempre `gpt-5` | Loguear `routing.reason` en Cloud Logging y ajustar heurísticas |
+| `Firestore: index not found` | Missing `client_id ASC, updated_at DESC` index in `conversations` | Create it using the link provided in the error message |
+| Tokens arrive all at once | Proxy buffering | Verify `X-Accel-Buffering: no` header (already included) |
+| `429 rate limit exceeded` | Rate limiter triggered | Wait 60s. For intensive tests, increase `_RATE_MAX_REQS` |
+| `400 rejected: empty_message` | Frontend sent an empty string | Validate input before calling fetch |
+| Agent never uses USDA | Unclear docstring | Check `tools_langchain.py`, add more domain-specific examples |
+| Costs are too high | Routing always forces `gpt-5` | Log `routing.reason` in Cloud Logging and adjust heuristics |
 
-## 📊 Métricas a monitorear
+## 📊 Metrics to Monitor
 
-Cloud Logging queries útiles:
+Useful Cloud Logging queries:
 
 ```
-# Distribución de tier de modelo
+# Model tier distribution
 jsonPayload.message =~ "routing client_id" | summarize count by jsonPayload.model
 
-# Latencia P95
+# P95 Latency
 resource.type = "cloud_run_revision" | latency.p95
 
-# Errores de extracción de facts
+# Fact extraction errors
 jsonPayload.message =~ "fact_extraction_(parse|llm)_error"
 ```
 
-## 📜 Licencia y créditos
 
-- USDA FoodData Central data: dominio público (CC0).
-- Proyecto educativo BSG Institute.
