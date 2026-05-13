@@ -1,0 +1,104 @@
+[
+  {
+    "client_id": "client_001",
+    "name": "Ana Torres",
+    "age": 34,
+    "sex": "F",
+    "height_cm": 165,
+    "weight_kg": 68,
+    "activity_level": "moderate",
+    "goals": ["weight_loss", "improve_energy"],
+    "target_weight_kg": 62,
+    "dietary_restrictions": ["lactose_intolerant", "no_pork"],
+    "allergies": ["nuts"],
+    "medical_conditions": ["mild_hypertension"],
+    "medications": ["losartan_50mg"],
+    "biomarkers": {
+      "ldl_cholesterol_mg_dl": 145,
+      "fasting_glucose_mg_dl": 98,
+      "last_updated": "2026-03-12"
+    },
+    "cultural_preferences": ["peruvian_cuisine"],
+    "dislikes": ["broccoli", "tofu"],
+    "typical_meals": {
+      "breakfast": "tostadas con palta y huevo",
+      "lunch": "almuerzo casero peruano",
+      "dinner": "ligero, ensalada o sopa"
+    },
+    "language": "es",
+    "timezone": "America/Lima",
+    "notes": "Trabaja en oficina, hace caminatas 3x semana. Quiere bajar 6kg sin dietas extremas."
+  },
+  {
+    "client_id": "client_002",
+    "name": "Marco Rivera",
+    "age": 52,
+    "sex": "M",
+    "height_cm": 178,
+    "weight_kg": 82,
+    "activity_level": "very_active",
+    "goals": ["maintain_muscle_mass", "athletic_performance"],
+    "target_weight_kg": 82,
+    "dietary_restrictions": [],
+    "allergies": [],
+    "medical_conditions": [],
+    "medications": [],
+    "biomarkers": {
+      "ldl_cholesterol_mg_dl": 110,
+      "fasting_glucose_mg_dl": 88,
+      "last_updated": "2026-02-20"
+    },
+    "diet_protocol": "ketogenic",
+    "macro_targets": {
+      "fat_pct": 70,
+      "protein_pct": 25,
+      "carbs_pct": 5
+    },
+    "cultural_preferences": [],
+    "dislikes": ["legumbres"],
+    "typical_meals": {
+      "breakfast": "huevos con tocino y aguacate",
+      "lunch": "carne roja con vegetales no almidonados",
+      "dinner": "pescado graso con espinaca"
+    },
+    "language": "es",
+    "timezone": "America/Lima",
+    "notes": "Triatleta máster. Compite en maratones MTB. Sigue keto estricta hace 3 años. Le interesa optimizar performance."
+  },
+  {
+    "client_id": "client_003",
+    "name": "Lucía Pérez",
+    "age": 28,
+    "sex": "F",
+    "height_cm": 160,
+    "weight_kg": 62,
+    "activity_level": "light",
+    "goals": ["healthy_pregnancy", "address_anemia"],
+    "pregnancy": {
+      "is_pregnant": true,
+      "trimester": 2,
+      "weeks": 22,
+      "due_date": "2026-08-15"
+    },
+    "dietary_restrictions": ["vegan_strict"],
+    "allergies": ["soy"],
+    "medical_conditions": ["mild_iron_deficiency_anemia"],
+    "medications": ["prenatal_vitamins", "iron_supplement_30mg"],
+    "biomarkers": {
+      "hemoglobin_g_dl": 10.8,
+      "ferritin_ng_ml": 18,
+      "vitamin_b12_pg_ml": 290,
+      "last_updated": "2026-04-10"
+    },
+    "cultural_preferences": ["mediterranean", "indian_cuisine"],
+    "dislikes": ["seitan"],
+    "typical_meals": {
+      "breakfast": "avena con frutos rojos y semillas de chía",
+      "lunch": "bowl de legumbres con vegetales",
+      "dinner": "curry de garbanzos con arroz integral"
+    },
+    "language": "es",
+    "timezone": "America/Lima",
+    "notes": "Vegana desde hace 6 años. Embarazo planificado. Preocupada por hierro y B12. Su obstetra aprobó el plan vegano con suplementos."
+  }
+]

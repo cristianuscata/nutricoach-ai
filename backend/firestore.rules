@@ -1,0 +1,25 @@
+// Reglas de Firestore — PRINCIPIO: deny by default.
+//
+// El backend de NutriCoach se conecta con un service account de Firebase Admin,
+// que tiene privilegios completos por diseño y SALTA estas reglas. Estas reglas
+// solo se aplican a clientes que quieran conectar a Firestore directamente
+// (browser SDK, mobile SDKs, etc.).
+//
+// La política aquí es: ningún cliente público puede leer ni escribir nada.
+// Toda interacción con datos pasa por el backend FastAPI.
+//
+// Si en el futuro habilitan acceso directo desde la app (ej. para chat en vivo
+// con Firestore listeners), tendrán que:
+// 1. Implementar Firebase Auth.
+// 2. Reescribir estas reglas con request.auth.uid validado contra client_id.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default: deny all.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

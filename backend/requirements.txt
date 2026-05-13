@@ -1,0 +1,21 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+pydantic>=2.11.7
+pydantic-settings>=2.9.1
+
+# LangChain
+langchain==0.3.25
+langchain-openai==0.3.16
+langchain-core==0.3.58
+
+# Firebase
+firebase-admin==6.6.0
+
+# Tools
+tavily-python==0.5.0
+httpx==0.28.1
+
+# Utilities
+python-dotenv==1.0.1
+sse-starlette==2.2.1
+cachetools==5.5.0
