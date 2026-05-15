@@ -83,11 +83,14 @@ def _build_system_prompt(client: dict[str, Any], long_term_memory: str) -> str:
         ensure_ascii=False,
         indent=2,
     )
-    return SYSTEM_TEMPLATE.format(
+    resolved = SYSTEM_TEMPLATE.format(
         client_profile_json=profile_json,
         long_term_memory=long_term_memory or "(Sin información previa.)",
         injection_defense=INJECTION_DEFENSE_FRAGMENT,
     )
+    # Escapar llaves restantes (del JSON) para que ChatPromptTemplate
+    # no las interprete como variables de plantilla.
+    return resolved.replace("{", "{{").replace("}", "}}")
 
 
 def build_chat_history(messages: list[dict[str, Any]]) -> list:

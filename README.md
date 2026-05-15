@@ -58,35 +58,70 @@ Before starting the backend:
 | USDA FoodData Central | Nutritional data | Free (1000 req/h) — [signup](https://fdc.nal.usda.gov/api-key-signup/) |
 | Tavily | Web search | 1000 searches/month (free) |
 
-### 2. Backend
+### 2. Configure environment
+
+The project uses a single `.env` at the **repository root**:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and fill in your credentials:
+
+```env
+OPENAI_API_KEY=sk-proj-...
+TAVILY_API_KEY=tvly-...
+USDA_API_KEY=DEMO_KEY          # or your real key
+GOOGLE_APPLICATION_CREDENTIALS=./firebase-service-account.json
+FIREBASE_PROJECT_ID=your-firebase-project-id
+CORS_ORIGINS=http://localhost:5173
+VITE_API_BASE=                 # leave empty for local dev
+LOG_LEVEL=INFO
+```
+
+Also place your Firebase service account file at `backend/firebase-service-account.json`.
+
+### 3. Backend (Terminal 1)
 
 ```bash
 cd backend
+
+# Create and activate virtual environment
 python -m venv venv
-source venv/bin/activate         # Linux/Mac
-# venv\Scripts\activate          # Windows
+source venv/Scripts/activate    # Windows (Git Bash / WSL)
+# source venv/bin/activate      # Linux / Mac
+
+# Install dependencies
 pip install -r requirements.txt
 
-cp .env.example .env             # then edit with your keys
-# place firebase-service-account.json in backend/
+# Load the 3 seed clients into Firestore (run once)
+python seed.py
 
-python seed.py                   # loads the 3 profiles
+# Start the server
 uvicorn main:app --reload --port 8000
 ```
 
-Verification:
-- `http://localhost:8000/health` → `{"status": "ok"}`
-- `http://localhost:8000/docs` → Swagger UI
-- `http://localhost:8000/clients` → 3 loaded profiles
+Verify it works:
+```bash
+curl http://localhost:8000/health
+# {"status":"ok"}
 
-### 3. Frontend
+curl http://localhost:8000/clients
+# Lists Ana, Marco and Lucía
+```
+
+Also available: `http://localhost:8000/docs` → Swagger UI
+
+### 4. Frontend (Terminal 2)
 
 ```bash
 cd frontend
 npm install
 npm run dev
-# http://localhost:5173
+# App running at http://localhost:5173
 ```
+
+Open `http://localhost:5173` in your browser. You should see the sidebar with the 3 clients.
 
 ## ☁️ Deploy to Cloud Run (Public URL)
 
