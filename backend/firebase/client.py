@@ -7,6 +7,9 @@ clientes públicos: toda escritura/lectura pasa por aquí.
 """
 from __future__ import annotations
 
+import json
+import os
+
 import firebase_admin
 from firebase_admin import credentials, firestore_async
 from functools import lru_cache
@@ -20,7 +23,15 @@ def _init_app() -> None:
     settings = get_settings()
     if firebase_admin._apps:
         return
-    cred = credentials.Certificate(settings.google_application_credentials)
+
+    # Railway/entornos sin filesystem: JSON completo como variable de entorno.
+    # En local sigue usando el archivo .json normalmente.
+    sa_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if sa_json:
+        cred = credentials.Certificate(json.loads(sa_json))
+    else:
+        cred = credentials.Certificate(settings.google_application_credentials)
+
     firebase_admin.initialize_app(
         cred,
         {"projectId": settings.firebase_project_id},
