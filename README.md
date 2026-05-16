@@ -83,21 +83,49 @@ Also place your Firebase service account file at `backend/firebase-service-accou
 
 ### 3. Backend (Terminal 1)
 
+**Option A — uv (recommended, faster)**
+
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager. Install it once:
+
+```bash
+# Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Mac / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then:
+
 ```bash
 cd backend
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/Scripts/activate    # Windows (Git Bash / WSL)
-# source venv/bin/activate      # Linux / Mac
+# Create virtual environment and install dependencies in one step
+uv venv
+uv pip install -r requirements.txt
 
-# Install dependencies
-pip install -r requirements.txt
+# Activate the environment
+source .venv/Scripts/activate   # Windows (Git Bash / WSL)
+# source .venv/bin/activate     # Mac / Linux
 
 # Load the 3 seed clients into Firestore (run once)
 python seed.py
 
 # Start the server
+uvicorn main:app --reload --port 8000
+```
+
+**Option B — pip (standard)**
+
+```bash
+cd backend
+
+python -m venv venv
+source venv/Scripts/activate    # Windows (Git Bash / WSL)
+# source venv/bin/activate      # Mac / Linux
+
+pip install -r requirements.txt
+python seed.py
 uvicorn main:app --reload --port 8000
 ```
 
@@ -122,6 +150,51 @@ npm run dev
 ```
 
 Open `http://localhost:5173` in your browser. You should see the sidebar with the 3 clients.
+
+## 🚂 Deploy to Railway (Recommended)
+
+Railway deploys both services directly from your GitHub repo — no CLI needed.
+
+### 1. Backend service
+
+1. [railway.app](https://railway.app) → **New Project → GitHub Repo** → select this repo
+2. **Settings → Root Directory**: `backend`
+3. Add these environment variables in Railway dashboard:
+
+| Variable | Value |
+|---|---|
+| `OPENAI_API_KEY` | your key |
+| `TAVILY_API_KEY` | your key |
+| `USDA_API_KEY` | `DEMO_KEY` or your key |
+| `FIREBASE_PROJECT_ID` | your Firebase project ID |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | full contents of `firebase-service-account.json` |
+| `CORS_ORIGINS` | `https://your-frontend.up.railway.app,http://localhost:5173` |
+| `LOG_LEVEL` | `INFO` |
+
+4. **Settings → Networking → Generate Domain** → copy the URL
+
+### 2. Frontend service
+
+1. Same project → **New Service → GitHub Repo** → same repo
+2. **Settings → Root Directory**: `frontend`
+3. Add one variable:
+
+| Variable | Value |
+|---|---|
+| `VITE_API_BASE` | `https://your-backend.up.railway.app` (full URL with https://) |
+
+4. **Settings → Networking → Generate Domain**
+5. Update `CORS_ORIGINS` in the backend service with the frontend URL and redeploy
+
+### 3. Firestore index (required)
+
+On first use, Firestore will return an error with a direct link to create the required index:
+- Collection: `conversations`
+- Fields: `client_id` Ascending, `updated_at` Descending
+
+Click the link in the error to create it instantly.
+
+---
 
 ## ☁️ Deploy to Cloud Run (Public URL)
 
